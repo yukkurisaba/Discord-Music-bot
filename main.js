@@ -161,7 +161,6 @@ client.on("message", async message => {
     })
 }})
 
-##############################
 //!鯖
 const Discord = require('discord.js');
 require('dotenv').config({path: "\.env"});
@@ -221,4 +220,3 @@ client.on("messageCreate", async message=>{
 		
 	}
 })
-############################################
