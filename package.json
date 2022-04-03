@@ -1,0 +1,32 @@
+{
+  "name": "glitch-v13-music-bot",
+  "main": "main.js",
+  "author": "Umut Bayraktar",
+  "description": "Discord.js V13 Compatible Umut Bayraktar Youtube Private Music Bot Infrastructure for Glitch Shared on GitHub!",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "discord-player": "^5.2.0",
+    "discord.js": "^13.4.0",
+    "ffmpeg-static": "^4.4.0",
+    "ms": "^3.0.0-canary.1",
+    "opusscript": "^0.0.8",
+    "express": "^4.17.2",
+    "@discordjs/opus": "^0.5.0",
+    "config": "^3.3.2",
+    "config-reloadable": "^1.0.8",
+    "google-translate-tts": "^0.3.0",
+    "voice-text": "^0.1.2",
+    "discord.js-commando": "^0.12.3",
+    "path": "^0.12.7",
+    "ytdl-core": "^4.11.0",
+    
+    "puppeteer": "^13.5.0",
+    "dotenv": "^16.0.0",
+    "nodemon": "^2.0.15"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}

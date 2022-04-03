@@ -1,0 +1,16 @@
+---
+  0 debug pnpm:scope: 
+    selected: 1
+    workspacePrefix: null
+  1 info pnpm: 
+    message: "A store server is running. All store manipulations are delegated to it."
+    prefix: "/app"
+  2 error pnpm: 
+    message: 
+      code: "EJSONPARSE"
+      file: "/app/package.json"
+    err: 
+      name: "Error"
+      message: "Failed to parse json\nUnexpected end of JSON input while parsing near ''"
+      code: "EJSONPARSE"
+      stack: "Error: Failed to parse json\nUnexpected end of JSON input while parsing near ''\n    at parseError (/opt/nvm/versions/node/v10.24.1/lib/node_modules/pnpm/lib/node_modules/read-package-json/read-json.js:452:11)\n    at parseJson (/opt/nvm/versions/node/v10.24.1/lib/node_modules/pnpm/lib/node_modules/read-package-json/read-json.js:104:26)\n    at /opt/nvm/versions/node/v10.24.1/lib/node_modules/pnpm/lib/node_modules/read-package-json/read-json.js:51:5\n    at /opt/nvm/versions/node/v10.24.1/lib/node_modules/pnpm/lib/node_modules/graceful-fs/graceful-fs.js:90:16\n    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)"
