@@ -87,8 +87,8 @@ setInterval(() => {
 
 if(process.env.TOKEN){
 client.login(process.env.TOKEN).catch(e => {
-console.log("The Bot Token You Entered Into Your Project Is Incorrect Or Your Bot's INTENTS Are OFF!")
+console.log("BotTokenが正しくないか、BotのIntentsがオフです!")
 })
 } else {
-console.log("Please Write Your Bot Token Opposite The Token In The .env File In Your Project!")
+console.log(".envにBotTokenを書いてください!")
 }
