@@ -1,8 +1,6 @@
 {
-  "name": "glitch-v13-music-bot",
+  "name": "音楽Bot",
   "main": "main.js",
-  "author": "Umut Bayraktar",
-  "description": "Discord.js V13 Compatible Umut Bayraktar Youtube Private Music Bot Infrastructure for Glitch Shared on GitHub!",
   "scripts": {
     "start": "node main.js"
   },
