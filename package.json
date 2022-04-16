@@ -6,18 +6,13 @@
   "scripts": {
     "start": "node main.js"
   },
-  "dependencies": {
+ "dependencies": {
     "discord-player": "^5.2.0",
     "discord.js": "^13.4.0",
     "ffmpeg-static": "^4.4.0",
     "ms": "^3.0.0-canary.1",
     "opusscript": "^0.0.8",
-    "express": "^4.17.2",
-    "@discordjs/opus": "^0.5.0",
-    "config": "^3.3.2",
-    "config-reloadable": "^1.0.8",
-    "path": "^0.12.7",
-    "ytdl-core": "^4.11.0"
+    "express": "^4.17.2"
   },
   "engines": {
     "node": "16.x"
