@@ -1,5 +1,5 @@
 module.exports = {
-        px: 'm/',
+        px: '!',
         playing: '音楽',
 
     opt: {
