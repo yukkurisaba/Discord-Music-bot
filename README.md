@@ -4,7 +4,7 @@
 <br>
 <h2>Good Luck to You with the Music Bot.</h2>
 <br>
-Umut Bayraktarさまの Youtube: <a href="https://www.youtube.com/UmutBayraktarYT">Subscribe</a>　Guide: <a href="https://youtu.be/6WQIiojePQ8">VİDEO GUIDE</a>
+ZerioDevさま: <a href="https://github.com/ZerioDev">GitHub</a>
 <br>
 
 
