@@ -1,7 +1,7 @@
 # Discord.js Music Bot
 このプロジェクトはいるかぁぁがZerioDev様のコードに手を加えた物です
 <br>
-<h1><a href=https://www.youtube.com/channel/UCO_s3V8FHioTQRBvJB0wsOQ">いるかぁぁ</a>のチャンネル</h1>
+<h1><a href="https://www.youtube.com/channel/UCO_s3V8FHioTQRBvJB0wsOQ">いるかぁぁ</a>のチャンネル</h1>
 <br>
 <h2>和訳元</h2>
 <br>
