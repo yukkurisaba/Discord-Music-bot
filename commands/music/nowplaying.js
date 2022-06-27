@@ -27,7 +27,7 @@ const trackDuration = timestamp.progress == 'Forever' ? 'Endless (Live)' : track
         embed.setDescription(`Audio **%${queue.volume}**\nDuration **${trackDuration}**\nLoop Mode **${methods[queue.repeatMode]}**\n${track. requestedBy}`);
 
         embed.setTimestamp();
-        embed.setFooter('Edited by Umut Bayraktar ❤️', message.author.avatarURL({ dynamic: true }));
+        embed.setFooter('Remixed by いるかぁぁ', message.author.avatarURL({ dynamic: true }));
 
         const saveButton = new MessageButton();
 
