@@ -4,7 +4,7 @@
 <br>
 <h2>Good Luck to You with the Music Bot.</h2>
 <br>
-ZerioDevさま: <a href="https://github.com/ZerioDev">GitHub</a>
+ZerioDev様: <a href="https://github.com/ZerioDev">GitHub</a>
 <br>
 
 
