@@ -9,7 +9,7 @@ module.exports = {
     execute(client, message) {
         const queue = client.player.getQueue(message.guild.id);
 
- if (!queue || !queue.playing) return message.channel.send(`${message.author}, There is no music currently playing!. ❌`);
+ if (!queue || !queue.playing) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
 
         const track = queue.current;
 
