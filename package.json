@@ -7,10 +7,10 @@
  "dependencies": {
     "discord-player": "5.2.0",
     "discord.js": "^13.4.0",
-    "ffmpeg-static": "^4.4.0",
-    "ms": "^3.0.0-canary.1",
-    "express": "^4.17.2",
-    "opusscript": "^0.0.8"
+    "ffmpeg-static": "4.4.0",
+    "ms": "3.0.0-canary.1",
+    "express": "4.17.2",
+    "opusscript": "0.0.8"
   },
   "engines": {
     "node": "16.x"
