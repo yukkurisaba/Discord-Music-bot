@@ -1,23 +1,23 @@
 const { Player } = require('discord-player');
-const { Client, Intents, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, EmbedBuilder } = require('discord.js');
 const { readdirSync } = require('fs');
-const { setTimeout } = require('timers/promises');
 
 //音楽🎶
-let client = new Client({
+global.client = new Client({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_VOICE_STATES
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.MessageContent
     ],
-    disableMentions: 'everyone',
+   disableMentions: 'everyone',
 });
 
 client.config = require('./config');
-client.player = new Player(client, client.config.opt.discordPlayer);
+global.player = new Player(client, client.config.opt.discordPlayer);
 client.commands = new Collection();
-const player = client.player
+CommandsArray = [];
 
 const events = readdirSync('./events/').filter(file => file.endsWith('.js'));
 for (const file of events) {
@@ -37,29 +37,59 @@ readdirSync('./commands/').forEach(dirs => {
     };
 });
 
-const { MessageEmbed } = require('discord.js');
+client.on('ready', (client) => {
+ if (client.config.app.global) client.application.commands.set(CommandsArray)
+  else client.guilds.cache.get(client.config.app.guild).commands.set(CommandsArray)
+})
 
 player.on('error', (queue, error) => {
-    console.log(`There was a problem with the song queue => ${error.message}`);
+    console.log(`Error emitted from the queue ${error.message}`);
 });
 
 player.on('connectionError', (queue, error) => {
-    console.log(`I'm having trouble connecting => ${error.message}`);
+    console.log(`Error emitted from the connection ${error.message}`);
 });
 
 player.on('trackStart', (queue, track) => {
-    if (!client.config.opt.loopMessage && queue.repeatMode !== 0) return;
-    const embed = new MessageEmbed();
-    embed.setColor('RANDOM');
-    embed.setDescription(`**${track.title}**を__**${queue.connection.channel.name}**__で再生します🎧`);
-    queue.metadata.send({ embeds: [embed] });
+  if (!client.config.opt.loopMessage && queue.repeatMode !== 0) return;
+   const embed = new EmbedBuilder()
+    .setAuthor({name: `Started playing ${track.title} in ${queue.connection.channel.name} 🎧`, iconURL: track.requestedBy.avatarURL()})
+    .setColor('#13f857')
+
+    const back = new ButtonBuilder()
+    .setLabel('Back')
+    .setCustomId(JSON.stringify({ffb: 'back'}))
+    .setStyle('Primary')
+
+    const skip = new ButtonBuilder()
+    .setLabel('Skip')
+    .setCustomId(JSON.stringify({ffb: 'skip'}))
+    .setStyle('Primary')
+
+    const resumepause = new ButtonBuilder()
+    .setLabel('Resume & Pause')
+    .setCustomId(JSON.stringify({ffb: 'resume&pause'}))
+    .setStyle('Danger')
+
+    const loop = new ButtonBuilder()
+    .setLabel('Loop')
+    .setCustomId(JSON.stringify({ffb: 'loop'}))
+    .setStyle('Secondary')
+    
+    const queuebutton = new ButtonBuilder()
+    .setLabel('Queue')
+    .setCustomId(JSON.stringify({ffb: 'queue'}))
+    .setStyle('Secondary')
+
+    const row1 = new ActionRowBuilder().addComponents(back, loop, resumepause, queuebutton, skip)
+    queue.metadata.send({ embeds: [embed], components: [row1] })
 });
 
 player.on('trackAdd', (queue, track) => {
-const embed = new MessageEmbed();
-    embed.setColor('GREEN');
-    embed.setDescription(`**${track.title}** プレイリストに追加しました ✅`);
-    queue.metadata.send({ embeds: [embed] });
+const embed2 = new EmbedBuilder();
+    .setColor('GREEN');
+    .setAuthor({name: `Started playing ${track.title} in ${queue.connection.channel.name} 🎧`, iconURL: track.requestedBy.avatarURL()})
+    queue.metadata.send({ embeds: [embed2] });
 });
 
 player.on('botDisconnect', (queue) => {
@@ -72,6 +102,10 @@ player.on('channelEmpty', (queue) => {
 
 player.on('queueEnd', (queue)=> {
     queue.metadata.send('すべてのプレイリストを再生しました ✅');
+});
+
+player.on('tracksAdd', (queue, tracks) => {
+    queue.metadata.send(`プレイリストにあるすべての曲を再生リストに追加しました ✅`);
 });
 
 const express = require("express");
