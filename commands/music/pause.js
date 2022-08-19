@@ -1,16 +1,19 @@
 module.exports = {
     name: 'pause',
-    aliases: [],
-    utilisation: '{prefix}pause',
+    description: 'pause the track',
     voiceChannel: true,
 
-    execute(client, message) {
-        const queue = client.player.getQueue(message.guild.id);
+    execute({ inter }) {
+        const queue = player.getQueue(inter.guildId);
 
-       if (!queue || !queue.playing) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
+        if (!queue) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
+        
+        if(queue.connection.paused) return inter.reply({content: 'The track is currently paused!', ephemeral: true})
+
+        if(queue.connection.paused) return inter.reply({content: `The track is currently paused, ${inter.member}... try again ? ❌`, ephemeral: true})
 
         const success = queue.setPaused(true);
-
-        return message.channel.send(success ? `The currently playing music named **${queue.current.title}** をストップしました ✅` : `${message.author}, どこかで間違っています ❌`);
+        
+        return inter.reply({ content: success ? `Current music ${queue.current.title} paused ✅` : `Something went wrong ${inter.member}... try again ? ❌` });
     },
 };
