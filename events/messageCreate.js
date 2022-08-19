@@ -16,13 +16,13 @@ module.exports = (client, message) => {
         const roleDJ = message.guild.roles.cache.find(x => x.name === DJ.roleName);
 
         if (!message.member.roles.cache.has(roleDJ.id)) {
-            return message.channel.send(`${message.author}, このコマンドは ${DJ.roleName} ロールを持つユーザーに対してのみ設定されます。 ❌`);
+            return message.channel.send(`${message.author}, This command is set only for those with the ${DJ.roleName} role. ❌`);
         }
     }
 
     if (cmd && cmd.voiceChannel) {
-        if (!message.member.voice.channel) return message.channel.send(`${message.author}, ボイスチャンネルに接続していません ❌`);
-        if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`${message.author}, 同じボイスチャンネルに入ってください。 ❌`);
+        if (!message.member.voice.channel) return message.channel.send(`${message.author}, ボイスチャンネルに接続してください ❌`);
+        if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`${message.author}, You are not on the same audio channel as me. ❌`);
     }
 
     if (cmd) cmd.execute(client, message, args);
