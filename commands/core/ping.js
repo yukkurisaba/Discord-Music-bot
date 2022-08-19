@@ -1,12 +1,14 @@
-const ms = require('ms');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: 'ping',
-    description: "Get the ping of the bot!",
-    async execute({ client, inter }) {
+    aliases: [],
+    utilisation: '{prefix}ping',
 
-        const m = await inter.reply("Ping?")
-        inter.editReply(`Pong! API Latency is ${Math.round(client.ws.ping)}ms 🛰️, Last heartbeat calculated ${ms(Date.now() - client.ws.shards.first().lastPingTimestamp, { long: true })} ago`)
-
+    execute(client, message) {
+      const embed = new MessageEmbed();
+      embed.setColor('RANDOM');
+      embed.setDescription(`**${client.ws.ping}ms** 🛰️`);
+      message.channel.send({ embeds: [embed] });
     },
 };
