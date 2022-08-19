@@ -1,15 +1,16 @@
 module.exports = {
     name: 'stop',
-    description: 'stop the track',
+    aliases: ['st'],
+    utilisation: '{prefix}stop',
     voiceChannel: true,
 
-    execute({ inter }) {
-        const queue = player.getQueue(inter.guildId);
+    execute(client, message) {
+        const queue = client.player.getQueue(message.guild.id);
 
-        if (!queue || !queue.playing) return inter.reply({ content:`No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
+        if (!queue || !queue.playing) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
 
         queue.destroy();
 
-        inter.reply({ content: `Music stopped intero this server, see you next time ✅`});
+        message.channel.send(`このサーバーで再生されていた音楽は停止しました ✅`);
     },
 };
