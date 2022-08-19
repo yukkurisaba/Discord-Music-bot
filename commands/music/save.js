@@ -1,18 +1,34 @@
+const { EmbedBuilder } = require("discord.js");
+
 module.exports = {
     name: 'save',
-    aliases: [],
-    utilisation: '{prefix}save',
+    description: 'save the current track!',
     voiceChannel: true,
 
-    async execute(client, message) {
-        const queue = client.player.getQueue(message.guild.id);
+    async execute({ inter }) {
+        const queue = player.getQueue(inter.guildId);
 
-  if (!queue || !queue.playing) return message.channel.send(`${message.author}, There is no music currently playing!. ❌`);
+        if (!queue) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
 
-        message.author.send(`Registered track: **${queue.current.title}** | ${queue.current.author}, Saved server: **${message.guild.name}** ✅`) .then(() => {
-            message.channel.send(`I sent the name of the music via private message. ✅`);
+        inter.member.send({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor('Red')
+                    .setTitle(`:arrow_forward: ${queue.current.title}`)
+                    .setURL(queue.current.url)
+                    .addFields(
+                        { name: ':hourglass: Duration:', value: `\`${queue.current.duration}\``, inline: true },
+                        { name: 'Song by:', value: `\`${queue.current.author}\``, inline: true },
+                        { name: 'Views :eyes:', value: `\`${Number(queue.current.views).toLocaleString()}\``, inline: true },
+                        { name: 'Song URL:', value: `\`${queue.current.url}\`` }
+                    )
+                    .setThumbnail(queue.current.thumbnail)
+                    .setFooter({text:`from the server ${inter.member.guild.name}`, iconURL: inter.member.guild.iconURL({ dynamic: false })})
+            ]
+        }).then(() => {
+            return inter.reply({ content: `I have sent you the title of the music by private messages ✅`, ephemeral: true });
         }).catch(error => {
-            message.channel.send(`${message.author}, Unable to send you private message. ❌`);
+            return inter.reply({ content: `Unable to send you a private message... try again ? ❌`, ephemeral: true });
         });
     },
 };
