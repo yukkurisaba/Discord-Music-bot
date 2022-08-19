@@ -1,17 +1,18 @@
 module.exports = {
     name: 'clear',
-    description: 'clear all the music in the queue',
+    aliases: ['c'],
+    utilisation: '{prefix}clear',
     voiceChannel: true,
 
-    async execute({ inter }) {
-        const queue = player.getQueue(inter.guildId);
+    async execute(client, message) {
+        const queue = client.player.getQueue(message.guild.id);
 
-        if (!queue || !queue.playing) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
+        if (!queue || !queue.playing) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
 
-        if (!queue.tracks[0]) return inter.reply({ content: `No music in the queue after the current one ${inter.member}... try again ? ❌`, ephemeral: true });
+        if (!queue.tracks[0]) return message.channel.send(`${message.author}, この曲の後に再生する音楽はありません ❌`);
 
         await queue.clear();
 
-        inter.reply(`The queue has just been cleared 🗑️`);
+        message.channel.send(`プレイリストを削除しました 🗑️`);
     },
 };
