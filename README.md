@@ -4,8 +4,8 @@
 <br>
 <h1>
 ⚠️注意⚠️
-ただ今YouTubeのみ使用することかできません！
-SpotifyとSoundCloudは使用可能です
+ただ今YouTubeとSpotifyが使用することかできません！
+SoundCloudは使用可能です
 </h1>
 <br>
 <br>
