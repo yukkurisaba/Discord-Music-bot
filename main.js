@@ -1,23 +1,22 @@
 const { Player } = require('discord-player');
-const { Client, GatewayIntentBits, Collection, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, EmbedBuilder } = require('discord.js');
+const { Client, Intents, Collection } = require('discord.js');
 const { readdirSync } = require('fs');
 
 //音楽🎶
-global.client = new Client({
+let client = new Client({
     intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildVoiceStates,
-        GatewayIntentBits.MessageContent
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_VOICE_STATES
     ],
-   disableMentions: 'everyone',
+    disableMentions: 'everyone',
 });
 
 client.config = require('./config');
-global.player = new Player(client, client.config.opt.discordPlayer);
+client.player = new Player(client, client.config.opt.discordPlayer);
 client.commands = new Collection();
-CommandsArray = [];
+const player = client.player
 
 const events = readdirSync('./events/').filter(file => file.endsWith('.js'));
 for (const file of events) {
@@ -37,59 +36,29 @@ readdirSync('./commands/').forEach(dirs => {
     };
 });
 
-client.on('ready', (client) => {
- if (client.config.app.global) client.application.commands.set(CommandsArray)
-  else client.guilds.cache.get(client.config.app.guild).commands.set(CommandsArray)
-})
+const { MessageEmbed } = require('discord.js');
 
 player.on('error', (queue, error) => {
-    console.log(`Error emitted from the queue ${error.message}`);
+    console.log(`再生リストに問題が発生しました => ${error.message}`);
 });
 
 player.on('connectionError', (queue, error) => {
-    console.log(`Error emitted from the connection ${error.message}`);
+    console.log(`I'm having trouble connecting => ${error.message}`);
 });
 
 player.on('trackStart', (queue, track) => {
-  if (!client.config.opt.loopMessage && queue.repeatMode !== 0) return;
-   const embed = new EmbedBuilder()
-    .setAuthor({name: `Started playing ${track.title} in ${queue.connection.channel.name} 🎧`, iconURL: track.requestedBy.avatarURL()})
-    .setColor('#13f857')
-
-    const back = new ButtonBuilder()
-    .setLabel('Back')
-    .setCustomId(JSON.stringify({ffb: 'back'}))
-    .setStyle('Primary')
-
-    const skip = new ButtonBuilder()
-    .setLabel('Skip')
-    .setCustomId(JSON.stringify({ffb: 'skip'}))
-    .setStyle('Primary')
-
-    const resumepause = new ButtonBuilder()
-    .setLabel('Resume & Pause')
-    .setCustomId(JSON.stringify({ffb: 'resume&pause'}))
-    .setStyle('Danger')
-
-    const loop = new ButtonBuilder()
-    .setLabel('Loop')
-    .setCustomId(JSON.stringify({ffb: 'loop'}))
-    .setStyle('Secondary')
-    
-    const queuebutton = new ButtonBuilder()
-    .setLabel('Queue')
-    .setCustomId(JSON.stringify({ffb: 'queue'}))
-    .setStyle('Secondary')
-
-    const row1 = new ActionRowBuilder().addComponents(back, loop, resumepause, queuebutton, skip)
-    queue.metadata.send({ embeds: [embed], components: [row1] })
+    if (!client.config.opt.loopMessage && queue.repeatMode !== 0) return;
+    const embed = new MessageEmbed();
+    embed.setColor('RANDOM');
+    embed.setDescription(`**${track.title}**を__**${queue.connection.channel.name}**__で再生します🎧`);
+    queue.metadata.send({ embeds: [embed] });
 });
 
 player.on('trackAdd', (queue, track) => {
-const embed2 = new EmbedBuilder();
-    .setColor('GREEN');
-    .setAuthor({name: `Started playing ${track.title} in ${queue.connection.channel.name} 🎧`, iconURL: track.requestedBy.avatarURL()})
-    queue.metadata.send({ embeds: [embed2] });
+const embed = new MessageEmbed();
+    embed.setColor('GREEN');
+    embed.setDescription(`**${track.title}** プレイリストに追加しました ✅`);
+    queue.metadata.send({ embeds: [embed] });
 });
 
 player.on('botDisconnect', (queue) => {
@@ -102,10 +71,6 @@ player.on('channelEmpty', (queue) => {
 
 player.on('queueEnd', (queue)=> {
     queue.metadata.send('すべてのプレイリストを再生しました ✅');
-});
-
-player.on('tracksAdd', (queue, tracks) => {
-    queue.metadata.send(`プレイリストにあるすべての曲を再生リストに追加しました ✅`);
 });
 
 const express = require("express");
@@ -121,8 +86,11 @@ setInterval(() => {
 
 if(process.env.TOKEN){
 client.login(process.env.TOKEN).catch(e => {
-console.log("BotTokenが正しくないか、BotのIntentsがオフです!")
+console.log("The Bot Token You Entered Into Your Project Is Incorrect Or Your Bot's INTENTS Are OFF!")
 })
 } else {
-console.log(".envにBotTokenを書いてください!")
+console.log("Please Write Your Bot Token Opposite The Token In The .env File In Your Project!")
 }
+
+
+client.login(process.env.TOKEN);
