@@ -1,33 +1,36 @@
-const { EmbedBuilder } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: 'queue',
-    description: 'Get the songs in the queue',
+    aliases: ['q'],
+    utilisation: '{prefix}queue',
     voiceChannel: true,
 
-    execute({ client, inter }) {
-        const queue = player.getQueue(inter.guildId);
+    execute(client, message) {
+        const queue = client.player.getQueue(message.guild.id);
 
-        if (!queue) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
+ 
+        if (!queue || !queue.playing) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
 
-        if (!queue.tracks[0]) return  inter.reply({ content: `No music in the queue after the current one ${inter.member}... try again ? ❌`, ephemeral: true });
+        if (!queue.tracks[0]) return message.channel.send(`${message.author}, 再生リストに音楽がありません ❌`);
 
-        const methods = ['', '🔁', '🔂'];
+        const embed = new MessageEmbed();
+        const methods = ['🔁', '🔂'];
+
+        embed.setColor('RED');
+        embed.setThumbnail(message.guild.iconURL({ size: 2048, dynamic: true }));
+        embed.setTitle(`Server Music List - ${message.guild.name} ${methods[queue.repeatMode]}`);
+
+        const tracks = queue.tracks.map((track, i) => `**${i + 1}** - ${track.title} | ${track.author} (Started by <@${track. requestedBy.id}>)`);
 
         const songs = queue.tracks.length;
+        const nextSongs = songs > 5 ? `And **${songs - 5}** Other Song...` : `**${songs}** つの音楽がリスト内にあります.`;
 
-        const nextSongs = songs > 5 ? `And **${songs - 5}** other song(s)...` : `In the playlist **${songs}** song(s)...`;
+        embed.setDescription(`再生中: \`${queue.current.title}\`\n\n${tracks.slice(0, 5).join('\n')}\n\n${nextSongs }`);
 
-        const tracks = queue.tracks.map((track, i) => `**${i + 1}** - ${track.title} | ${track.author} (requested by : ${track.requestedBy.username})`)
+        embed.setTimestamp();
+        embed.setFooter('Remixed by いるか', message.author.avatarURL({ dynamic: true }));
 
-        const embed = new EmbedBuilder()
-        .setColor('#ff0000')
-        .setThumbnail(inter.guild.iconURL({ size: 2048, dynamic: true }))
-        .setAuthor({name: `Server queue - ${inter.guild.name} ${methods[queue.repeatMode]}`, iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})
-        .setDescription(`Current ${queue.current.title}\n\n${tracks.slice(0, 5).join('\n')}\n\n${nextSongs}`)
-        .setTimestamp()
-        .setFooter({ text: 'Music comes first - Made with heart by Zerio ❤️', iconURL: inter.member.avatarURL({ dynamic: true })})
-
-        inter.reply({ embeds: [embed] });
+        message.channel.send({ embeds: [embed] });
     },
 };
