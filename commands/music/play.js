@@ -1,43 +1,45 @@
 const { QueryType } = require('discord-player');
-const { setTimeout } = require('timers/promises');
-
+const { ApplicationCommandOptionType } = require('discord.js');
 module.exports = {
     name: 'play',
-    aliases: ['p'],
-    utilisation: '{prefix}play [song name/URL]',
+    description: "play a song!",
     voiceChannel: true,
+    options: [
+        {
+            name: 'song',
+            description: 'the song you want to play',
+            type: ApplicationCommandOptionType.String,
+            required: true,
+        }
+    ],
 
-    async execute(client, message, args) {
-if (!args[0]) return message.channel.send(`${message.author}, Write the name of the music you want to search. ❌`);
-
-        const res = await client.player.search(args.join(' '), {
-            requestedBy: message.member,
-            searchEnglish: QueryType.AUTO
+    async execute({ inter }) {
+        const song = inter.options.getString('song');
+        const res = await player.search(song, {
+            requestedBy: inter.member,
+            searchEngine: QueryType.AUTO
         });
 
-        if (!res || !res.tracks.length) return message.channel.send(`${message.author}, No results found! ❌`);
+        if (!res || !res.tracks.length) return inter.reply({ content: `No results found ${inter.member}... try again ? ❌`, ephemeral: true });
 
-        const queue = await client.player.createQueue(message.guild, {
-            metadata: message.channel
+        const queue = await player.createQueue(inter.guild, {
+            metadata: inter.channel,
+            spotifyBridge: client.config.opt.spotifyBridge,
+            initialVolume: client.config.opt.defaultvolume,
+            leaveOnEnd: client.config.opt.leaveOnEnd
         });
 
         try {
-            if (!queue.connection) await queue.connect(message.member.voice.channel);
+            if (!queue.connection) await queue.connect(inter.member.voice.channel);
         } catch {
-            await client.player.deleteQueue(message.guild.id);
-            return message.channel.send(`${message.author}, I can't join audio channel. ❌`);
+            await player.deleteQueue(inter.guildId);
+            return inter.reply({ content: `I can't join the voice channel ${inter.member}... try again ? ❌`, ephemeral: true});
         }
 
-        await message.channel.send(`${res.playlist ? 'Your Playlist' : 'Your Track'} Loading... 🎧`)
-        .then(msg => {
-                msg.delete({ timeout: 20000 });
-            })
-        .catch();
-       
+       await inter.reply({ content:`Loading your ${res.playlist ? 'playlist' : 'track'}... 🎧`});
 
         res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
 
         if (!queue.playing) await queue.play();
-      
     },
 };
