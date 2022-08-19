@@ -1,19 +1,16 @@
 module.exports = {
     name: 'resume',
-    description: 'play the track',
+    aliases: [],
+    utilisation: '{prefix}resume',
     voiceChannel: true,
 
-    execute({ inter }) {
-        const queue = player.getQueue(inter.guildId);
+    execute(client, message) {
+        const queue = client.player.getQueue(message.guild.id);
 
-        if (!queue) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
-        
-        if(queue.connection.paused) return inter.reply({content: 'The track is already running!', ephemeral: true})
-
-        if(!queue.connection.paused) return inter.reply({content: `The track is already running, ${inter.member}... try again ? ❌`, ephemeral: true})
+        if (!queue) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
 
         const success = queue.setPaused(false);
-        
-        return inter.reply({ content:success ? `Current music ${queue.current.title} resumed ✅` : `Something went wrong ${inter.member}... try again ? ❌`});
+
+        return message.channel.send(success ? `**${queue.current.title}**, 曲は続けて再生されます。 ✅` : `${message.author}, どこかで間違っています ❌`);
     },
 };
