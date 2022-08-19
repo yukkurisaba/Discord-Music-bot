@@ -1,42 +1,63 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 
 module.exports = {
     name: 'nowplaying',
-    aliases: ['np'],
-    utilisation: '{prefix}nowplaying',
+    description: 'veiw what is playing!',
     voiceChannel: true,
 
-    execute(client, message) {
-        const queue = client.player.getQueue(message.guild.id);
+    execute({ inter }) {
+        const queue = player.getQueue(inter.guildId);
 
- if (!queue || !queue.playing) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
+        if (!queue) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
 
         const track = queue.current;
-
-        const embed = new MessageEmbed();
-
-        embed.setColor('RED');
-        embed.setThumbnail(track.thumbnail);
-        embed.setTitle(track.title)
 
         const methods = ['disabled', 'track', 'queue'];
 
         const timestamp = queue.getPlayerTimestamp();
-const trackDuration = timestamp.progress == 'Forever' ? 'Endless (Live)' : track.duration;
 
-        embed.setDescription(`Audio **%${queue.volume}**\nDuration **${trackDuration}**\nLoop Mode **${methods[queue.repeatMode]}**\n${track. requestedBy}`);
+        const trackDuration = timestamp.progress == 'Infinity' ? 'infinity (live)' : track.duration;
 
-        embed.setTimestamp();
-        embed.setFooter('Remixed by いるかぁぁ', message.author.avatarURL({ dynamic: true }));
+        const progress = queue.createProgressBar();
+        
 
-        const saveButton = new MessageButton();
+        const embed = new EmbedBuilder()
+        .setAuthor({ name: track.title,  iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})
+        .setThumbnail(track.thumbnail)
+        .setDescription(`Volume **${queue.volume}**%\nDuration **${trackDuration}**\nProgress ${progress}\nLoop mode **${methods[queue.repeatMode]}**\nRequested by ${track.requestedBy}`)
+        .setFooter({ text: 'Music comes first - Made with heart by Zerio ❤️', iconURL: inter.member.avatarURL({ dynamic: true })})
+        .setColor('ff0000')
+        .setTimestamp()
 
-        saveButton.setLabel('Save Song');
-        saveButton.setCustomId('saveTrack');
-        saveButton.setStyle('SUCCESS');
+        const saveButton = new ButtonBuilder()
+        .setLabel('Save this track')
+        .setCustomId(JSON.stringify({ffb: 'savetrack'}))
+        .setStyle('Danger')
 
-        const row = new MessageActionRow().addComponents(saveButton);
+        const volumeup = new ButtonBuilder()
+        .setLabel('Volume up')
+        .setCustomId(JSON.stringify({ffb: 'volumeup'}))
+        .setStyle('Primary')
 
-        message.channel.send({ embeds: [embed], components: [row] });
+        const volumedown = new ButtonBuilder()
+        .setLabel('Volume Down')
+        .setCustomId(JSON.stringify({ffb: 'volumedown'}))
+        .setStyle('Primary')
+
+        const loop = new ButtonBuilder()
+        .setLabel('Loop')
+        .setCustomId(JSON.stringify({ffb: 'loop'}))
+        .setStyle('Danger')
+
+        const resumepause = new ButtonBuilder()
+         .setLabel('Resume & Pause')
+         .setCustomId(JSON.stringify({ffb: 'resume&pause'}))
+         .setStyle('Success')
+
+
+
+        const row = new ActionRowBuilder().addComponents(volumedown, saveButton, resumepause, loop, volumeup);
+
+         inter.reply({ embeds: [embed], components: [row] });
     },
 };
