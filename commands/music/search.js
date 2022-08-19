@@ -1,75 +1,75 @@
-const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { QueryType } = require('discord-player');
 
 module.exports = {
     name: 'search',
-    description: 'search a track',
+    aliases: [],
+    utilisation: '{prefix}search [song name]',
     voiceChannel: true,
-    options: [
-        {
-            name: 'song',
-            description: 'the song you want to search',
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        }
-    ],
 
-    async execute({ client, inter }) {
-        const song = inter.options.getString('song');
+    async execute(client, message, args) {
+      
+if (!args[0]) return message.channel.send(`${message.author}, 音楽の名前を入力してください。 ❌`);
 
-        const res = await player.search(song, {
-            requestedBy: inter.member,
+        const res = await client.player.search(args.join(' '), {
+            requestedBy: message.member,
             searchEngine: QueryType.AUTO
         });
 
-        if (!res || !res.tracks.length) return inter.reply({ content: `No results found ${inter.member}... try again ? ❌`, ephemeral: true });
+        if (!res || !res.tracks.length) return message.channel.send(`${message.author}, 検索結果が見つかりません ❌`);
 
-        const queue = await player.createQueue(inter.guild, {
-            metadata: inter.channel,
-            leaveOnEnd: client.config.opt.leaveOnEnd,
+        const queue = await client.player.createQueue(message.guild, {
+            metadata: message.channel
         });
+
+        const embed = new MessageEmbed();
+
+        embed.setColor('RED');
+        embed.setTitle(`Searched Music: ${args.join(' ')}`);
+
         const maxTracks = res.tracks.slice(0, 10);
 
-        const embed = new EmbedBuilder()
-        .setColor('#ff0000')
-        .setAuthor({ name: `Results for ${song}`, iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true })})
-        .setDescription(`${maxTracks.map((track, i) => `**${i + 1}**. ${track.title} | ${track.author}`).join('\n')}\n\nSelect choice between **1** and **${maxTracks.length}** or **cancel** ⬇️`)
-        .setTimestamp()
-        .setFooter({ text: 'Music comes first - Made with heart by Zerio ❤️', iconURL: inter.member.avatarURL({ dynamic: true })})
+        embed.setDescription(`${maxTracks.map((track, i) => `**${i + 1}**. ${track.title} | ${track.author}`).join('\n')}\n\n **1** ~ **${maxTracks.length}** から音楽を選び番号を送ってください。キャンセルの場合は**cancel**と送ってください⬇️`);
 
-        inter.reply({ embeds: [embed] });
+        embed.setTimestamp();
+        embed.setFooter('Remixed by いるかぁぁ', message.author.avatarURL({ dynamic: true }));
 
-        const collector = inter.channel.createMessageCollector({
+        message.channel.send({ embeds: [embed] });
+
+        const collector = message.channel.createMessageCollector({
             time: 15000,
-            max: 1,
             errors: ['time'],
-            filter: m => m.author.id === inter.member.id
+            filter: m => m.author.id === message.author.id
         });
 
-        collector.on('collect', async (query) => {
-            if (query.content.toLowerCase() === 'cancel') return inter.followUp({ content: `Search cancelled ✅`, ephemeral: true }), collector.stop();
+       collector.on('collect', async (query) => {
+            if (query.content.toLowerCase() === 'cancel') return message.channel.send(`Call cancelled. ✅`) && collector.stop();
 
-            const value = parseInt(query);
-            if (!value || value <= 0 || value > maxTracks.length) return inter.followUp({ content: `Invalid response, try a value between **1** and **${maxTracks.length}** or **cancel**... try again ? ❌`, ephemeral: true });
+            const value = parseInt(query.content);
+
+            if (!value || value <= 0 || value > maxTracks.length) return message.channel.send(`Error: select a song **1** to **${maxTracks.length}** and write send or type **cancel** and cancel selection. ❌`);
 
             collector.stop();
 
             try {
-                if (!queue.connection) await queue.connect(inter.member.voice.channel);
+                if (!queue.connection) await queue.connect(message.member.voice.channel);
             } catch {
-                await player.deleteQueue(inter.guildId);
-                return inter.followUp({ content: `I can't join the voice channel ${inter.member}... try again ? ❌`, ephemeral: true });
+                await client.player.deleteQueue(message.guild.id);
+                return message.channel.send(`${message.author}, I can't join audio channel. ❌`);
             }
 
-            await inter.followUp(`Loading your search... 🎧`);
-
-            queue.addTrack(res.tracks[query.content - 1]);
-
+            await message.channel.send(`Loading your music call. 🎧`)
+            .then(msg => {
+                msg.delete({ timeout: 50000 });
+            })
+            .catch();
+            queue.addTrack(res.tracks[Number(query.content)-1]);
             if (!queue.playing) await queue.play();
+           
         });
 
         collector.on('end', (msg, reason) => {
-            if (reason === 'time') return inter.followUp({ content:`Search timed out ${inter.member}... try again ? ❌`, ephemeral: true })
+            if (reason === 'time') return message.channel.send(`${message.author}, 検索時間が切れました ❌`);
         });
     },
 };
