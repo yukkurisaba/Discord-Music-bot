@@ -1,17 +1,18 @@
 module.exports = {
     name: 'back',
-    description: "Go back the song before",
+    aliases: [],
+    utilisation: '{prefix}back',
     voiceChannel: true,
 
-    async execute({ inter }) {
-        const queue = player.getQueue(inter.guildId);
+    async execute(client, message) {
+        const queue = client.player.getQueue(message.guild.id);
 
-        if (!queue || !queue.playing) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
+        if (!queue || !queue.playing) return message.channel.send(`${message.author}, 現在再生中の音楽はありません ❌`);
 
-        if (!queue.previousTracks[1]) return inter.reply({ content: `There was no music played before ${inter.member}... try again ? ❌`, ephemeral: true });
+        if (!queue.previousTracks[1]) return message.channel.send(`${message.author}, 以前再生していた音楽はありません ❌`);
 
         await queue.back();
 
-        inter.reply({ content:`Playing the **previous** track ✅`});
+        message.channel.send(`ひとつ前の音楽を再生します... ✅`);
     },
 };
