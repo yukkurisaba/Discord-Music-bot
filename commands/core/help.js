@@ -1,21 +1,24 @@
-const { EmbedBuilder } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: 'help',
-    description: "All the commands this bot has!",
+    aliases: ['h',"yardım"],
     showHelp: false,
+    utilisation: '{prefix}help',
 
-    execute({ client, inter }) {
+    execute(client, message, args) {
+        const embed = new MessageEmbed();
+
+        embed.setColor('RED');
+        embed.setTitle(client.user.username);
+        embed.setThumbnail(client.user.displayAvatarURL())
         const commands = client.commands.filter(x => x.showHelp !== false);
 
-        const embed = new EmbedBuilder()
-        .setColor('#ff0000')
-        .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true }) })
-        .setDescription('This code comes from a GitHub project [ZerioDev/Music-bot](https://github.com/ZerioDev/Music-bot).\nThe use of this one is possible while keeping the credits for free.\nIf you want to remove the credits join the Discord support server.')
-        .addFields([ { name: `Enabled - ${commands.size}`, value: commands.map(x => `\`${x.name}\``).join(' | ') } ])
-        .setTimestamp()
-        .setFooter({ text: 'Music comes first - Made with heart by Zerio ❤️', iconURL: inter.member.avatarURL({ dynamic: true })});
+        embed.setDescription('お借りしたコードの作者: [Umut Bayraktar](https://youtube.com/UmutBayraktarYT) \nこのBotはいるかがRemixしたもです') ;
+        embed.addField(`Available - ${commands.size} のコマンドが使用可能`, commands.map(x => `\`${x.name}${x.aliases[0] ? ` (${x.aliases.map(y => y).join(', ')})\`` : '\`'}`).join(' | '));
 
-        inter.reply({ embeds: [embed] });
+        embed.setTimestamp();
+        embed.setFooter('Music Bot Commands - Remixed by いるか', message.author.avatarURL({ dynamic: true }));
+        message.channel.send({ embeds: [embed] });
     },
 };
