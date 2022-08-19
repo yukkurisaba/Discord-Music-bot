@@ -1,26 +1,31 @@
-const maxVol = require("../../config.js").opt.maxVol;
+const maxVol = client.config.opt.maxVol;
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
     name: 'volume',
-    aliases: ['vol'],
-    utilisation: `{prefix}volume [1-${maxVol}]`,
+    description: 'adjust',
     voiceChannel: true,
+    options: [
+        {
+            name: 'volume',
+            description: 'the amount volume',
+            type: ApplicationCommandOptionType.Number,
+            required: true,
+            minValue: 1,
+            maxValue: maxVol
+        }
+    ],
 
-    execute(client, message, args) {
-        const queue = client.player.getQueue(message.guild.id);
+    execute({ inter }) {
+        const queue = player.getQueue(inter.guildId);
 
-       if (!queue || !queue.playing) return message.channel.send(`${message.author}, There is no music currently playing!. ❌`);
+        if (!queue) return inter.reply({ content: `No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
+        const vol = inter.options.getNumber('volume')
 
-        const vol = parseInt(args[0]);
-
-        if (!vol) return message.channel.send(`Current volume: **${queue.volume}** 🔊\n**To change the volume, with \`1\` to \`${maxVol}\` Type a number between.**`);
-
-        if (queue.volume === vol) return message.channel.send(`${message.author}, The volume you want to change is already the current volume ❌`);
-
-        if (vol < 0 || vol > maxVol) return message.channel.send(`${message.author}, **Type a number from \`1\` to \`${maxVol}\` to change the volume .** ❌`);
+        if (queue.volume === vol) return inter.reply({ content: `The volume you want to change is already the current one ${inter.member}... try again ? ❌`, ephemeral: true });
 
         const success = queue.setVolume(vol);
 
-        return message.channel.send(success ? `Volume changed: **%${vol}**/**${maxVol}** 🔊` : `${message.author}, Something went wrong. ❌`) ;
+        return inter.reply({ content:success ? `The volume has been modified to **${vol}**/**${maxVol}**% 🔊` : `Something went wrong ${inter.member}... try again ? ❌`});
     },
 };
