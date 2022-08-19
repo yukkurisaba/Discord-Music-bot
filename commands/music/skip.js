@@ -1,16 +1,15 @@
 module.exports = {
     name: 'skip',
-    aliases: ['s'],
-    utilisation: '{prefix}skip',
+    description: 'stop the track',
     voiceChannel: true,
 
-    execute(client, message) {
-        const queue = client.player.getQueue(message.guild.id);
- 
-        if (!queue || !queue.playing) return message.channel.send(`${message.author}, 音楽を再生していません！ ❌`);
+    execute({ inter }) {
+        const queue = player.getQueue(inter.guildId);
+
+         if (!queue || !queue.playing) return inter.reply({ content:`No music currently playing ${inter.member}... try again ? ❌`, ephemeral: true });
 
         const success = queue.skip();
 
-        return message.channel.send(success ? `**${queue.current.title}**をスキップしました ✅` : `${message.author}, Something went wrong ❌`);
+        return inter.reply({ content: success ? `Current music ${queue.current.title} skipped ✅` : `Something went wrong ${inter.member}... try again ? ❌`});
     },
 };
