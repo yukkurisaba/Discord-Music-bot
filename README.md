@@ -3,9 +3,7 @@
 <br>
 <br>
 <h1>
-⚠️注意⚠️
-ただ今YouTubeとSpotifyが使用することかできません！
-SoundCloudは使用可能です
+YouTube、Spotify、SoundCloud全て使えるようになりました！
 </h1>
 <br>
 <br>
@@ -16,5 +14,3 @@ YouTube:<a href="https://youtu.be/ycjxnssaVU8">Botの作成方法</a>
 <h2>和訳元</h2>
 ZerioDev様: <a href="https://github.com/ZerioDev">GitHub</a>
 <br>
-
-
