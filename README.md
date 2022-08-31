@@ -3,7 +3,7 @@
 <br>
 <br>
 <h1>
-YouTube、Spotify、SoundCloud全て使えるようになりました！
+YouTube、Spotify、SoundCloud全て使えるようになりました！(安定してないのですぐ使えなくなる可能性あり)
 </h1>
 <br>
 <br>
