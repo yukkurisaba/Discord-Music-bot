@@ -3,8 +3,9 @@
 <br>
 <br>
 <h1>
-YouTube、Spotify、SoundCloud全て使えるようになりました！(安定してないのですぐ使えなくなる可能性あり)
+⚠️このコードはDiscord-playerのバージョンが低く動作が上手くいかない状態となっています⚠️
 </h1>
+下のリンク先の方のものを参考にしてください
 <br>
 <br>
 <h1><a href="https://www.youtube.com/channel/UCO_s3V8FHioTQRBvJB0wsOQ">いるかぁぁ</a>のチャンネル</h1>
